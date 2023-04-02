@@ -15,17 +15,10 @@ const Diagram = () => {
 
   useEffect(() => {
     setCanvas(canvas.current);
-  });
+  }, [setCanvas]);
 
   return (
-    <div
-      style={{
-        overflow: "hidden",
-        width: "100%",
-        height: "12px",
-        borderRadius: "5px",
-      }}
-    >
+    <div style={{ width: "100%", height: "100%" }}>
       <canvas
         ref={canvas}
         style={{ display: "block", width: "100%", height: "100%" }}
