@@ -5,35 +5,39 @@ export default function useDiagram(
 ) {
   const [canvas, setCanvas] = useState<null | HTMLCanvasElement>(null);
 
-  if (canvas) {
+  const canvasContext = canvas?.getContext("2d");
+
+  if (canvas && canvasContext && payload) {
     const totalQuantity = payload.reduce((accumulator, currentValue) => {
       return accumulator + currentValue.quantity;
     }, 0);
-    const canvasContext = canvas?.getContext("2d");
-    if (canvasContext && payload)
-      payload.forEach(({ color, quantity }, idx, quantities) => {
-        const startOfQuantity = quantities.reduce(
-          (accumulator, currentValue, index) => {
-            if (index < idx) {
-              return accumulator + currentValue.quantity;
-            }
-            return accumulator;
-          },
-          0
-        );
+    const modifyArrayToRelativeValue = payload.map(
+      ({ quantity, color }, index) => {
+        const startCoordinate = payload
+          .slice(0, index)
+          .reduce((accum, item) => accum + item.quantity, 0);
 
-        const percentOfCanvasWidth = (quantity / totalQuantity) * canvas.width;
-        const endOfPreviousQuantity =
-          (startOfQuantity / totalQuantity) * canvas.width;
+        return {
+          color,
+          relativeWidth: (quantity / totalQuantity) * canvas.width,
+          relativeStartCoordinate:
+            (startCoordinate / totalQuantity) * canvas.width,
+        };
+      }
+    );
 
+    modifyArrayToRelativeValue.forEach(
+      ({ relativeStartCoordinate, relativeWidth, color }) => {
         canvasContext.fillStyle = color;
-        canvasContext?.fillRect(
-          endOfPreviousQuantity,
+        canvasContext.fillRect(
+          relativeStartCoordinate,
           0,
-          percentOfCanvasWidth,
+          relativeWidth,
           canvas.height
         );
-      });
+      }
+    );
   }
+
   return { setCanvas };
 }
