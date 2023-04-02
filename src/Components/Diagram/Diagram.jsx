@@ -15,7 +15,7 @@ const Diagram = () => {
 
   useEffect(() => {
     setCanvas(canvas.current);
-  });
+  }, []); // we will use hook only on first mount if we will have dynamical data - need put it in useState and add to deps
 
   return (
     <div
