@@ -38,7 +38,7 @@ export default function useDiagram(
             : 0,
           percent: totalQuantity
             ? Math.round((quantity / totalQuantity) * 100)
-            : 100,
+            : 0,
         };
       });
     diagramInfo = modifyArrayToRelativeValue;

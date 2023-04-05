@@ -37,7 +37,7 @@ const DiagramControl = ({ InputValue, setInputs, inputs }) => {
 
       return preInputs.map((el, index) => {
         if (index === indexOfChangedEl) {
-          el.quantity = Number(current.target.value);
+          el.quantity = Math.abs(Number(current.target.value));
         }
         return el;
       });
@@ -76,6 +76,7 @@ const DiagramControl = ({ InputValue, setInputs, inputs }) => {
               id={item.id}
               value={item.quantity}
               onChange={(e) => onChangeInput(e)}
+              min={0}
             />
             <button type="button" id={item.id} onClick={(e) => removeInput(e)}>
               Remove string
