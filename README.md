@@ -1,1 +1,1 @@
-Takes values ​​and builds a line line chart depending on the percentage of values
+Takes values ​​and builds a line chart depending on the percentage of value.
