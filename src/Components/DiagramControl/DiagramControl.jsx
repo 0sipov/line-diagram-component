@@ -1,7 +1,7 @@
 import React from "react";
 
 //Utils
-const toFindIndexOfElbyId = (arrayOfElements, idOfElement) => {
+const toFindIndexOfElById = (arrayOfElements, idOfElement) => {
   return arrayOfElements.findIndex((el) => {
     return el.id === idOfElement;
   });
@@ -17,7 +17,7 @@ const DiagramControl = ({ InputValue, setInputs, inputs }) => {
 
   const removeInput = (current) => {
     setInputs((preInputs) => {
-      const indexOfDeletedEl = toFindIndexOfElbyId(
+      const indexOfDeletedEl = toFindIndexOfElById(
         preInputs,
         current.target.id
       );
@@ -30,7 +30,7 @@ const DiagramControl = ({ InputValue, setInputs, inputs }) => {
 
   const onChangeInput = (current) => {
     setInputs((preInputs) => {
-      const indexOfChangedEl = toFindIndexOfElbyId(
+      const indexOfChangedEl = toFindIndexOfElById(
         preInputs,
         current.target.id
       );
@@ -46,7 +46,7 @@ const DiagramControl = ({ InputValue, setInputs, inputs }) => {
 
   const onChangeColorInput = (current) => {
     setInputs((preInputs) => {
-      const indexOfChangedEl = toFindIndexOfElbyId(
+      const indexOfChangedEl = toFindIndexOfElById(
         preInputs,
         current.target.id
       );
