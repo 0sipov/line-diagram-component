@@ -10,22 +10,22 @@ const mok = [
 ];
 
 //Model
-class InputValue {
-  constructor() {
-    this.id = Date.now().toString();
-    this.color = "#000000";
-    this.quantity = 0;
-  }
-}
+// class InputValue {
+//   constructor() {
+//     this.id = Date.now().toString();
+//     this.color = "#000000";
+//     this.quantity = 0;
+//   }
+// }
 
-export default function App() {
+export const App = () => {
   const [inputs, setInputs] = useState(mok);
 
   return (
     <div>
       <Diagram diagramData={inputs} />
       <DiagramControl
-        InputValue={InputValue}
+        // InputValue={InputValue}
         inputs={inputs}
         setInputs={setInputs}
       />

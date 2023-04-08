@@ -1,90 +1,75 @@
-import React from "react";
+import React, {useEffect} from "react";
 
 //Utils
-const toFindIndexOfElById = (arrayOfElements, idOfElement) => {
-  return arrayOfElements.findIndex((el) => {
-    return el.id === idOfElement;
-  });
-};
+// const toFindIndexOfElById = (arrayOfElements, idOfElement) => {
+//   return arrayOfElements.findIndex((el) => {
+//     return el.id === idOfElement;
+//   });
+// };
 
 //Component
-const DiagramControl = ({ InputValue, setInputs, inputs }) => {
-  const CreateInput = () => {
-    setInputs((preInputs) => {
-      return [...preInputs, new InputValue()];
-    });
+const DiagramControl = ({inputs, setInputs}) => {
+  const createItem = () => {
+    setInputs([...inputs, {id: String(Date.now()), color: '#000000', quantity: 1}])
   };
 
-  const removeInput = (current) => {
-    setInputs((preInputs) => {
-      const indexOfDeletedEl = toFindIndexOfElById(
-        preInputs,
-        current.target.id
-      );
+  const deleteItem = (id) => {
+    setInputs(inputs.filter(item => item.id !== id))
 
-      const inputs = [...preInputs];
-      inputs.splice(indexOfDeletedEl, 1);
-      return inputs;
-    });
   };
 
-  const onChangeInput = (current) => {
-    setInputs((preInputs) => {
-      const indexOfChangedEl = toFindIndexOfElById(
-        preInputs,
-        current.target.id
-      );
+  const onChangeInput = (id, value) => {
+    setInputs((inputs) => inputs.map(item => {
+      if(item.id === id) {
+        // return {...item, quantity: parseInt(value, 10) || 0}
+        return {...item, quantity: String(parseInt(value, 10) || 0)}
+      }
+      return item
+    }))
+  }
 
-      return preInputs.map((el, index) => {
-        if (index === indexOfChangedEl) {
-          el.quantity = Math.abs(Number(current.target.value));
-        }
-        return el;
-      });
-    });
-  };
+  const blur = (e) => {
+    console.log({e})
+  }
 
-  const onChangeColorInput = (current) => {
-    setInputs((preInputs) => {
-      const indexOfChangedEl = toFindIndexOfElById(
-        preInputs,
-        current.target.id
-      );
-
-      return preInputs.map((el, index) => {
-        if (index === indexOfChangedEl) {
-          el.color = current.target.value;
-        }
-        return el;
-      });
-    });
+  const onChangeColorInput = (id, value) => {
+    setInputs(inputs.map(item => {
+      if(item.id === id) {
+        return {...item, color: value}
+      }
+      return item
+    }))
   };
 
   return (
     <div style={{ display: "flex", flexDirection: "column" }}>
       {inputs.map((item) => {
         return (
-          <div key={item.id}>
+          // className dis selection click wright of div and u will get error in console something about multi color cant selection bla bla bla
+          // to fix problem with 0 on leading number we need change input to type string or convert value in object to string. U can expiriment with it :)
+          <div key={item.id} className="disable-text-selection">
             <input
               type="color"
               id={item.id}
               value={item.color}
-              onChange={(e) => onChangeColorInput(e)}
+              onChange={(e) => onChangeColorInput(e.target.id, e.target.value)}
             />
             <input
               type="number"
+              inputMode="numeric"
               id={item.id}
               value={item.quantity}
-              onChange={(e) => onChangeInput(e)}
-              min={0}
+              onChange={(e) => onChangeInput(e.target.id, e.target.value)}
+              onBlur={blur}
+              min={1}
             />
-            <button type="button" id={item.id} onClick={(e) => removeInput(e)}>
+            <button type="button" id={item.id} onClick={(e) => deleteItem(e.target.id)}>
               Remove string
             </button>
           </div>
         );
       })}
-      <button type="button" onClick={CreateInput}>
+      <button type="button" onClick={createItem}>
         Add string
       </button>
     </div>
