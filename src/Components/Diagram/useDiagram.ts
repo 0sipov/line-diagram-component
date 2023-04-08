@@ -1,64 +1,59 @@
 import { useState } from "react";
 
+interface modifyArrayToRelativeValueI {
+  id: string;
+  color: string;
+  relativeWidth: number;
+  relativeStartCoordinate: number;
+  percent: number;
+}
+
 export default function useDiagram(
-  payload: { color: string; quantity: number }[]
+  payload: { id: string; color: string; quantity: number }[]
 ) {
   const [canvas, setCanvas] = useState<null | HTMLCanvasElement>(null);
+  let diagramInfo: null | modifyArrayToRelativeValueI[] = null;
 
-  if (canvas) {
+  const canvasContext = canvas?.getContext("2d");
+
+  if (canvas && canvasContext && payload) {
     const totalQuantity = payload.reduce((accumulator, currentValue) => {
       return accumulator + currentValue.quantity;
     }, 0);
-    const canvasContext = canvas?.getContext("2d"); //we didnt need optional chaining operator because we checked it upper
 
-    // wright very similar but in my opinion some easy for understanding
-    // const modifyArrayToRelativeValue = payload.map(({quantity, color}, index) => {
-    //   const startCoordinate = payload
-    //       .slice(0, index)
-    //       .reduce((accum, item) => accum + item.quantity, 0)
-    //
-    //   return {
-    //     color,
-    //     relativeWidth: quantity / totalQuantity * canvas.width,
-    //     relativeStartCoordinate: startCoordinate / totalQuantity * canvas.width
-    //   }
-    // })
-    //
-    // modifyArrayToRelativeValue.forEach(({relativeStartCoordinate, relativeWidth, color}) => {
-    //   canvasContext.fillStyle = color;
-    //     canvasContext.fillRect(
-    //         relativeStartCoordinate,
-    //     0,
-    //       relativeWidth,
-    //       canvas.height
-    //     )
-    // })
+    const modifyArrayToRelativeValue: modifyArrayToRelativeValueI[] =
+      payload.map((el, index) => {
+        const { quantity } = el;
+        const startCoordinate = payload
+          .slice(0, index)
+          .reduce((accum, item) => accum + item.quantity, 0);
 
-
-    if (canvasContext && payload)
-      payload.forEach(({ color, quantity }, idx, quantities) => {
-        const startOfQuantity = quantities.reduce(
-          (accumulator, currentValue, index) => {
-            if (index < idx) {
-              return accumulator + currentValue.quantity;
-            }
-            return accumulator;
-          },
-          0
-        );
-
-        const percentOfCanvasWidth = (quantity / totalQuantity) * canvas.width;
-        const endOfPreviousQuantity =
-          (startOfQuantity / totalQuantity) * canvas.width;
-
-        canvasContext.fillStyle = color;
-        canvasContext?.fillRect(
-          endOfPreviousQuantity,
-          0,
-          percentOfCanvasWidth,
-          canvas.height
-        ); // do u like optional operator? %)
+        return {
+          ...el,
+          relativeWidth: totalQuantity
+            ? (quantity / totalQuantity) * canvas.width
+            : canvas.width,
+          relativeStartCoordinate: totalQuantity
+            ? (startCoordinate / totalQuantity) * canvas.width
+            : 0,
+          percent: totalQuantity
+            ? Math.round((quantity / totalQuantity) * 100)
+            : 0,
+        };
       });
+    diagramInfo = modifyArrayToRelativeValue;
+
+    modifyArrayToRelativeValue.forEach(
+      ({ relativeStartCoordinate, relativeWidth, color }) => {
+        canvasContext.fillStyle = color;
+        canvasContext.fillRect(
+          relativeStartCoordinate,
+          0,
+          relativeWidth,
+          canvas.height
+        );
+      }
+    );
   }
-  return { setCanvas };
+  return { setCanvas, diagramInfo };
 }
