@@ -15,12 +15,8 @@ export default function useDiagram(
   let diagramInfo: null | modifyArrayToRelativeValueI[] = null;
 
   const canvasContext = canvas?.getContext("2d");
-  //it not necessary, but i checked it when try use undefined for quantity and won't delete^^
-    //so I decide try change all quantity value ti number in calculating. We can before start  calculate  mapping array and change all quantity to number
-    //i think it will better because we will change quantity to number in one place
-    //it will your home work :)
-    //otherwise we cant simply use input type text and didnt thinking about changing type of quantity^ but we lose it very pretty default arrow ^(
-  const filteredPayload = payload.filter(item => item.quantity)
+  // filter for quantity present and make it a number
+  const filteredPayload = payload.filter(item => item.quantity).map(item => ({...item, quantity: Number(item.quantity)}))
 
   if (canvas && canvasContext &&  filteredPayload) {
     const totalQuantity =  filteredPayload.reduce((accumulator, currentValue) => {
@@ -29,10 +25,9 @@ export default function useDiagram(
 
     const modifyArrayToRelativeValue: modifyArrayToRelativeValueI[] = filteredPayload.map((el, index) => {
         let { quantity } = el;
-        quantity = Number(quantity)
         const startCoordinate =  filteredPayload
           .slice(0, index)
-          .reduce((accum, item) => accum + Number(item.quantity), 0);
+          .reduce((accum, item) => accum + item.quantity, 0);
 
         return {
           ...el,
@@ -49,7 +44,6 @@ export default function useDiagram(
       });
     diagramInfo = modifyArrayToRelativeValue;
 
-      console.log('hih',modifyArrayToRelativeValue)
     modifyArrayToRelativeValue.forEach(
       ({ relativeStartCoordinate, relativeWidth, color }) => {
         canvasContext.fillStyle = color;
